@@ -1,0 +1,14 @@
+[package]
+authors = ["Splinter Suidman"]
+name = "zermelo-rs"
+version = "0.1.0"
+license = "MIT"
+description = "A library that retrieves a schedule from Zermelo."
+repository = "https://github.com/splintah/zermelo-rs"
+readme = "README.md"
+keywords = ["zermelo", "schedule"]
+
+[dependencies]
+reqwest = "0.8.1"
+serde_json = "1.0.5"
+toml = "0.4.5"
