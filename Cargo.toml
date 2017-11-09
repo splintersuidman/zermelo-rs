@@ -1,6 +1,6 @@
 [package]
 authors = ["Splinter Suidman"]
-name = "zermelo-rs"
+name = "zermelo"
 version = "0.1.0"
 license = "MIT"
 description = "A library that retrieves a schedule from Zermelo."
