@@ -14,10 +14,10 @@ extern crate zermelo;
 
 fn main() {
     // Get schedule using:
-    let schedule = Schedule::new("school", "code").unwrap();
+    let schedule = zermelo::Schedule::new("school", "code").unwrap();
     println!("{}", schedule.access_token);
     // or, when you have got an access token already:
-    let schedule = Schedule::with_access_token("school", "access token");
+    let schedule = zermelo::Schedule::with_access_token("school", "access token");
 
     schedule.get_appointments(start, end).unwrap();
     for appointment in schedule.appointments {
