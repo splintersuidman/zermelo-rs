@@ -10,6 +10,7 @@ name = "zermelo"
 readme = "README.md"
 homepage = "https://github.com/splintah/zermelo-rs"
 repository = "https://github.com/splintah/zermelo-rs"
+documentation = "https://docs.rs/zermelo"
 version = "0.1.3"
 
 [badges]
