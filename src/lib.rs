@@ -33,7 +33,7 @@
 //! # let school = String::from("example");
 //! # let access_token = String::from("abcdefghijklmnopqrstuvwxyz");
 //! # let mut schedule = zermelo::Schedule::with_access_token(school, access_token);
-//! // The should be set to something else.
+//! // These should be set to something else.
 //! let start: i64 = 0;
 //! let end: i64 = 10;
 //!
@@ -50,16 +50,11 @@
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-// This macro IS being used, albeit in a test.
-#[allow(unused_imports)]
-#[macro_use]
 extern crate serde_json;
 extern crate reqwest;
 
 mod schedule;
 mod appointment;
 
-#[doc(inline)]
 pub use schedule::Schedule;
-#[doc(inline)]
 pub use appointment::{Appointment, AppointmentType};

@@ -11,7 +11,7 @@ readme = "README.md"
 homepage = "https://github.com/splintah/zermelo-rs"
 repository = "https://github.com/splintah/zermelo-rs"
 documentation = "https://docs.rs/zermelo"
-version = "0.1.5"
+version = "0.1.6"
 
 [badges]
 travis-ci = { repository = "splintah/zermelo-rs", branch = "master" }

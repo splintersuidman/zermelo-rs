@@ -1,6 +1,5 @@
 use reqwest;
 use serde_json;
-use serde_json::Value;
 use appointment::*;
 use std::io::Read;
 use std::error::Error;
@@ -20,7 +19,7 @@ impl Schedule {
     /// Create a new `Schedule` from an authorization code (only once usable) and a school identifier.
     /// This will get the access token from the API.
     /// Returns a `Schedule` or an error.
-    pub fn new(school: String, code: String) -> Result<Self, &'static str> {
+    pub fn new(school: String, code: String) -> Result<Self, String> {
         let url = format!("https://{}.zportal.nl/api/v3/oauth/token", school);
         let post_data = [("grant_type", "autorization_code"), ("code", code.as_str())];
 
@@ -31,33 +30,21 @@ impl Schedule {
             .send();
         let mut response = match response {
             Ok(res) => res,
-            Err(_) => return Err("could not make request"),
+            Err(e) => return Err(format!("could not make request: {}", e.description())),
         };
 
         // Check whether response code equals "200 OK".
         if response.status().as_u16() != 200 {
-            return Err("response code is not 200");
+            return Err("response code is not 200".to_owned());
         }
 
-        // Read response body to string.
-        let mut body = String::new();
-        match response.read_to_string(&mut body) {
-            Ok(_) => {}
-            Err(_) => return Err("could not read to string"),
+        // Parse response as JSON.
+        let json: AuthenticationResponse = match response.json() {
+            Ok(j) => j,
+            Err(e) => return Err(format!("could not parse response as JSON: {}", e.description())),
         };
 
-        // Parse body.
-        let response: Value = match serde_json::from_str(body.as_str()) {
-            Ok(v) => v,
-            Err(_) => return Err("could not parse body as JSON"),
-        };
-
-        // Make sure response["access_token"] is a string.
-        if !response["access_token"].is_string() {
-            return Err("access token in response is not a string");
-        }
-        // We can safely unwrap here, because we checked whether it's a string.
-        let access_token = response["access_token"].as_str().unwrap().to_string();
+        let access_token = json.access_token;
 
         Ok(Schedule {
             school,
@@ -119,7 +106,9 @@ impl Schedule {
             .replace("changeDescription", "change_description")
             .replace("branchOfSchool", "branch_of_school");
 
-        let response: Value = match serde_json::from_str(body.as_str()) {
+        println!("{}", body);
+
+        let response: AppointmentsResponse = match serde_json::from_str(body.as_str()) {
             Ok(res) => res,
             Err(e) => {
                 return Err(format!(
@@ -129,33 +118,86 @@ impl Schedule {
             }
         };
 
-        // Get response from JSON, because why not wrap everything in "response"?
-        let response = match response.get("response") {
-            Some(res) => res,
-            None => return Err("could not get response from JSON".to_owned()),
-        };
-        // Get lessons from data.
-        let lessons = match response.get("data") {
-            Some(l) => l,
-            None => return Err("could not get data from response[\"response\"".to_owned()),
-        };
-        let lessons = lessons.as_array().unwrap();
-
-        // For every lesson, add it to self.appointments.
-        for lesson in lessons {
-            // Make sure lesson is an object.
-            if !lesson.is_object() {
-                return Err("lesson is not an object".to_owned());
-            }
-            if let Ok(appointment) = Appointment::from_json_map(lesson.to_owned()) {
-                self.appointments.push(appointment);
-            };
-        }
+        self.appointments = response.response.data;
 
         // Sort appointments by start time.
         self.appointments
             .sort_unstable_by_key(|k| k.start.unwrap_or(0));
 
         Ok(self)
+    }
+}
+
+#[derive(Deserialize)]
+struct AuthenticationResponse {
+    access_token: String,
+}
+
+#[derive(Deserialize)]
+struct AppointmentsResponse {
+    response: AppointmentsResponseResponse,
+}
+
+#[derive(Deserialize)]
+// Why, Zermelo, would you wrap everything in a "response" map?
+struct AppointmentsResponseResponse {
+    data: Vec<Appointment>,
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json;
+    use schedule::*;
+
+    #[test]
+    fn parse_request() {
+        // Data example from https://zermelo.atlassian.net/wiki/spaces/DEV/pages/22577247/Example+Retrieving+a+Schedule.
+        let json = r#"{
+            "response": {
+                "status": 200,
+                "message": "",
+                "startRow": 0,
+                "endRow": 27,
+                "totalRows": 27,
+                "data": [
+                    {
+                        "id": 5,
+                        "start": 42364236,
+                        "end": 436234523,
+                        "startTimeSlot": 1,
+                        "endTimeSlot": 1,
+                        "subjects": ["ne"],
+                        "teachers": ["KRO"],
+                        "groups": ["v1a"],
+                        "locations": ["M92"],
+                        "type": "lesson",
+                        "remark": "Take care to bring your books",
+                        "valid": true,
+                        "cancelled": false,
+                        "modified": true,
+                        "moved": false,
+                        "new": false,
+                        "changeDescription": "The location has been changed from M13 to M92"
+                    }
+                ]
+            }
+        }"#;
+
+        let json = json.replace("appointmentInstance", "appointment_instance")
+            .replace("startTimeSlot", "start_time_slot")
+            .replace("endTimeSlot", "end_time_slot")
+            .replace("type", "appointment_type")
+            .replace("lastModified", "lastModified")
+            .replace("changeDescription", "change_description")
+            .replace("branchOfSchool", "branch_of_school");
+
+        let response: AppointmentsResponse = serde_json::from_str(json.as_str()).unwrap();
+        let appointment = &response.response.data[0];
+        assert_eq!(appointment.id, Some(5));
+        assert_eq!(appointment.start, Some(42364236));
+        assert_eq!(appointment.start_time_slot, Some(1));
+        assert_eq!(appointment.subjects, Some(vec![String::from("ne")]));
+        assert_eq!(appointment.appointment_type, Some(String::from("lesson")));
+        assert_eq!(appointment.cancelled, Some(false));
     }
 }

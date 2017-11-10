@@ -1,7 +1,4 @@
-extern crate serde_json;
-
 use std::fmt;
-use serde_json::Value;
 
 /// You can use this enum to parse `Appointment.appointment_type`.
 /// This is done to make matching easier.
@@ -116,14 +113,6 @@ pub struct Appointment {
     pub branch: Option<String>,
 }
 
-impl Appointment {
-    /// Deserialize an appointment from a json map.
-    pub fn from_json_map(lesson: Value) -> Result<Appointment, serde_json::Error> {
-        let appointment: Appointment = serde_json::from_value(lesson)?;
-        Ok(appointment)
-    }
-}
-
 impl fmt::Debug for Appointment {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(
@@ -153,18 +142,21 @@ impl fmt::Debug for Appointment {
 #[cfg(test)]
 mod tests {
     use appointment::Appointment;
+    use serde_json;
 
     #[test]
-    fn appointment_from_json_map() {
-        let map = json!({
+    fn appointment_from_json() {
+        let json = r#"{
             "start": 1510185600,
             "end": 1510271999,
             "start_time_slot": 0,
             "end_time_slot": 9,
-            "subjects": ["netl"]
-        });
+            "subjects": [
+                "netl"
+            ]
+        }"#;
 
-        let appointment = Appointment::from_json_map(map).unwrap();
+        let appointment: Appointment = serde_json::from_str(json).unwrap();
         assert_eq!(appointment.start, Some(1510185600));
         assert_eq!(appointment.end, Some(1510271999));
         assert_eq!(appointment.start_time_slot, Some(0));
