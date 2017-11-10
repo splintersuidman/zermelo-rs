@@ -67,7 +67,7 @@ impl Schedule {
         }
     }
 
-    pub fn get_appointments(&mut self, start: u64, end: u64) -> Result<&Self, String> {
+    pub fn get_appointments(&mut self, start: i64, end: i64) -> Result<&Self, String> {
         let url = format!(
             "https://{}.zportal.nl/api/v3/appointments?user=~me&start={}&end={}&access_token={}",
             self.school,
