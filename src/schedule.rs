@@ -108,8 +108,6 @@ impl Schedule {
             .replace("changeDescription", "change_description")
             .replace("branchOfSchool", "branch_of_school");
 
-        println!("{}", body);
-
         let response: AppointmentsResponse = match serde_json::from_str(body.as_str()) {
             Ok(res) => res,
             Err(e) => {
