@@ -1,5 +1,5 @@
-extern crate zermelo;
 extern crate chrono;
+extern crate zermelo;
 
 use chrono::prelude::*;
 
@@ -23,13 +23,19 @@ fn main() {
 
     // Get today's times.
     let dt = Local::now();
-    let start = dt.with_hour(0).unwrap()
-        .with_minute(0).unwrap()
-        .with_second(0).unwrap()
+    let start = dt.with_hour(0)
+        .unwrap()
+        .with_minute(0)
+        .unwrap()
+        .with_second(0)
+        .unwrap()
         .timestamp();
-    let end = dt.with_hour(23).unwrap()
-        .with_minute(59).unwrap()
-        .with_second(59).unwrap()
+    let end = dt.with_hour(23)
+        .unwrap()
+        .with_minute(59)
+        .unwrap()
+        .with_second(59)
+        .unwrap()
         .timestamp();
 
     // Get appointments between start and end.

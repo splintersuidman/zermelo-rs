@@ -79,9 +79,7 @@ impl Schedule {
         // Make request.
         let mut response = match reqwest::get(url.as_str()) {
             Ok(res) => res,
-            Err(e) => return Err(
-                format!("could not make request: {}", e.description())
-            ),
+            Err(e) => return Err(format!("could not make request: {}", e.description())),
         };
 
         // Check whether response code equals "200 OK".
@@ -93,16 +91,31 @@ impl Schedule {
         let mut body = String::new();
         match response.read_to_string(&mut body) {
             Ok(res) => res,
-            Err(e) => return Err(
-                format!("could read response to string: {}", e.description())
-            ),
+            Err(e) => {
+                return Err(format!(
+                    "could read response to string: {}",
+                    e.description()
+                ))
+            }
         };
+
+        // Replace camelCase index with snake_case index, so we can deserialize it easier.
+        let body = body.replace("appointmentInstance", "appointment_instance")
+            .replace("startTimeSlot", "start_time_slot")
+            .replace("endTimeSlot", "end_time_slot")
+            .replace("type", "appointment_type")
+            .replace("lastModified", "lastModified")
+            .replace("changeDescription", "change_description")
+            .replace("branchOfSchool", "branch_of_school");
 
         let response: Value = match serde_json::from_str(body.as_str()) {
             Ok(res) => res,
-            Err(e) => return Err(
-                format!("could parse JSON from response: {}", e.description())
-            ),
+            Err(e) => {
+                return Err(format!(
+                    "could parse JSON from response: {}",
+                    e.description()
+                ))
+            }
         };
 
         // Get response from JSON, because why not wrap everything in "response"?
@@ -113,7 +126,7 @@ impl Schedule {
         // Get lessons from data.
         let lessons = match response.get("data") {
             Some(l) => l,
-            None => return Err("could not get data from response[\"response\"".to_owned())
+            None => return Err("could not get data from response[\"response\"".to_owned()),
         };
         let lessons = lessons.as_array().unwrap();
 
@@ -123,8 +136,9 @@ impl Schedule {
             if !lesson.is_object() {
                 return Err("lesson is not an object".to_owned());
             }
-            let appointment = Appointment::from_json_map(lesson);
-            self.appointments.push(appointment);
+            if let Ok(appointment) = Appointment::from_json_map(lesson.to_owned()) {
+                self.appointments.push(appointment);
+            };
         }
 
         // Sort appointments by start time.
