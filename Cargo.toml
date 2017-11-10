@@ -8,8 +8,12 @@ keywords = [
 license = "MIT"
 name = "zermelo"
 readme = "README.md"
+homepage = "https://github.com/splintah/zermelo-rs"
 repository = "https://github.com/splintah/zermelo-rs"
 version = "0.1.0"
+
+[badges]
+travis-ci = { repository = "splintah/zermelo-rs", branch = "master" }
 
 [dependencies]
 reqwest = "0.8.1"
