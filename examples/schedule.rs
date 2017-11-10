@@ -4,9 +4,11 @@ extern crate zermelo;
 use chrono::prelude::*;
 
 fn main() {
-    let school = String::from("cgu");
-    let code = String::from("");
-    let access_token = String::from("kc6i2ete286rednaqj3gp8890f");
+    // Replace these with your own properties.
+    // If access_token is set, code does not have to be set.
+    let school = String::from("school");
+    let code = String::from("code");
+    let access_token = String::from("access token");
 
     let mut schedule: zermelo::Schedule;
 

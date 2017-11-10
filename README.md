@@ -4,3 +4,6 @@ A Rust crate that retrieves a schedule from Zermelo.
 
 # Examples
 See [examples/](https://github.com/splintah/zermelo-rs/tree/master/examples) for some example programs using this crate.
+
+# Disclaimer
+This crate is not affiliated with Zermelo. It only uses its API for retrieving a schedule.
