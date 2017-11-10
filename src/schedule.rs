@@ -21,6 +21,8 @@ impl Schedule {
     /// Returns a `Schedule` or an error.
     pub fn new(school: String, code: String) -> Result<Self, String> {
         let url = format!("https://{}.zportal.nl/api/v3/oauth/token", school);
+        // Remove spaces from code.
+        let code = code.replace(" ", "");
         let post_data = [("grant_type", "autorization_code"), ("code", code.as_str())];
 
         // Send request.

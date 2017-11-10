@@ -6,7 +6,6 @@
 //! ## Obtaining an access token
 //! ```no_run
 //! let school = String::from("example");
-//! // Warning: `code` may not contain spaces.
 //! let code = String::from("123456789012");
 //!
 //! let schedule = zermelo::Schedule::new(school, code).unwrap();
