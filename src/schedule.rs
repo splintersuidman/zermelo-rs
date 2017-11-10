@@ -5,13 +5,21 @@ use appointment::*;
 use std::io::Read;
 use std::error::Error;
 
+/// This struct represents the schedule, containing [Appointment](./struct.Appointment.html)s.
 pub struct Schedule {
+    /// The school id used in the URL.
+    /// For the school id of 'example', this URL will be: `https://example.zportal.nl/`.
     pub school: String,
+    /// The access token obtained from the API, used to obtain appointments.
     pub access_token: String,
+    /// A vector of the appointments.
     pub appointments: Vec<Appointment>,
 }
 
 impl Schedule {
+    /// Create a new `Schedule` from an authorization code (only once usable) and a school identifier.
+    /// This will get the access token from the API.
+    /// Returns a `Schedule` or an error.
     pub fn new(school: String, code: String) -> Result<Self, &'static str> {
         let url = format!("https://{}.zportal.nl/api/v3/oauth/token", school);
         let post_data = [("grant_type", "autorization_code"), ("code", code.as_str())];
@@ -58,6 +66,8 @@ impl Schedule {
         })
     }
 
+    /// Create a new `Schedule` when an access token has been obtained already.
+    /// This cannot fail, so this will not return a `Result`.
     pub fn with_access_token(school: String, access_token: String) -> Self {
         Schedule {
             school,
@@ -66,6 +76,8 @@ impl Schedule {
         }
     }
 
+    /// Get the appointments between `start` and `end` from the API, and set them to `self.appointments`.
+    /// Returns a reference to itself, or an error.
     pub fn get_appointments(&mut self, start: i64, end: i64) -> Result<&Self, String> {
         let url = format!(
             "https://{}.zportal.nl/api/v3/appointments?user=~me&start={}&end={}&access_token={}",
