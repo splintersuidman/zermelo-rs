@@ -16,4 +16,4 @@ $ cargo run --example schedule
 ```
 
 # Disclaimer
-This crate is not affiliated with Zermelo. It only uses its API for retrieving a schedule.
+This crate is not affiliated with Zermelo Software B.V. It only uses its API for retrieving a schedule.
