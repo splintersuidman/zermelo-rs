@@ -112,16 +112,16 @@ mod tests {
         let map = json!({
             "start": 1510185600,
             "end": 1510271999,
-            "startTimeSlot": 0,
-            "endTimeSlot": 9,
+            "start_time_slot": 0,
+            "end_time_slot": 9,
             "subjects": ["netl"]
         });
 
-        let appointment = Appointment::from_json_map(&map);
+        let appointment = Appointment::from_json_map(map).unwrap();
         assert_eq!(appointment.start, Some(1510185600));
         assert_eq!(appointment.end, Some(1510271999));
         assert_eq!(appointment.start_time_slot, Some(0));
         assert_eq!(appointment.end_time_slot, Some(9));
-        assert_eq!(appointment.subjects, vec![String::from("netl")]);
+        assert_eq!(appointment.subjects, Some(vec![String::from("netl")]));
     }
 }
