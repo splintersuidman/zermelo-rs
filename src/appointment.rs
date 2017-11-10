@@ -201,7 +201,7 @@ impl Appointment {
     }
 }
 
-impl fmt::Display for Appointment {
+impl fmt::Debug for Appointment {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(
             f,
