@@ -1,7 +1,7 @@
 extern crate serde_json;
 
 use std::fmt;
-use self::serde_json::Value;
+use serde_json::Value;
 
 pub enum AppointmentType {
     Unknown,

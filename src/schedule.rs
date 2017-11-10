@@ -1,10 +1,9 @@
-extern crate reqwest;
-extern crate serde_json;
-
+use reqwest;
+use serde_json;
+use serde_json::Value;
 use appointment::*;
 use std::io::Read;
 use std::error::Error;
-use self::serde_json::Value;
 
 pub struct Schedule {
     pub school: String,
