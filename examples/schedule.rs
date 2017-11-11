@@ -12,11 +12,11 @@ fn main() {
 
     let mut schedule: zermelo::Schedule;
 
-    if code.len() > 0 {
+    if !code.is_empty() {
         // If we have got an authentication code:
         schedule = zermelo::Schedule::new(school, code).unwrap();
         println!("{}", schedule.access_token);
-    } else if access_token.len() > 0 {
+    } else if !access_token.is_empty() {
         // else if you have got an access token already:
         schedule = zermelo::Schedule::with_access_token(school, access_token);
     } else {
