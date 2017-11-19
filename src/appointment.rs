@@ -3,8 +3,8 @@
 ///
 /// ```no_run
 /// # use zermelo::AppointmentType;
-/// let t = AppointmentType::from_str("exam"); // => Some(AppointmentType::Exam)
-/// let n = AppointmentType::from_str("abc"); // => None
+/// let t = AppointmentType::parse("exam"); // => Some(AppointmentType::Exam)
+/// let n = AppointmentType::parse("abc"); // => None
 /// ```
 pub enum AppointmentType {
     /// `unknown` in Zermelo's API.
