@@ -19,7 +19,7 @@ impl Schedule {
     /// Create a new `Schedule` from an authorization code (only once usable) and a school identifier.
     /// This will get the access token from the API.
     /// Returns a `Schedule` or an error.
-    pub fn new(school: String, code: String) -> Result<Self, String> {
+    pub fn new(school: &str, code: &str) -> Result<Self, String> {
         let url = format!("https://{}.zportal.nl/api/v3/oauth/token", school);
         // Remove spaces from code.
         let code = code.replace(" ", "");
@@ -49,7 +49,7 @@ impl Schedule {
         let access_token = json.access_token;
 
         Ok(Schedule {
-            school,
+            school: school.to_owned(),
             access_token,
             appointments: Vec::new(),
         })
@@ -57,10 +57,10 @@ impl Schedule {
 
     /// Create a new `Schedule` when an access token has been obtained already.
     /// This cannot fail, so this will not return a `Result`.
-    pub fn with_access_token(school: String, access_token: String) -> Self {
+    pub fn with_access_token(school: &str, access_token: &str) -> Self {
         Schedule {
-            school,
-            access_token: access_token.to_string(),
+            school: school.to_owned(),
+            access_token: access_token.to_owned(),
             appointments: Vec::new(),
         }
     }

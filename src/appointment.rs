@@ -1,5 +1,3 @@
-use std::fmt;
-
 /// You can use this enum to parse `Appointment.appointment_type`.
 /// This is done to make matching easier.
 ///
@@ -28,7 +26,7 @@ pub enum AppointmentType {
 impl AppointmentType {
     /// Parse appointment type from `&str`.
     /// Returns an optional `AppointmentType`.
-    pub fn from_str(t: &str) -> Option<Self> {
+    pub fn parse(t: &str) -> Option<Self> {
         match t {
             "unknown" => Some(AppointmentType::Unknown),
             "lesson" => Some(AppointmentType::Lesson),
@@ -45,7 +43,7 @@ impl AppointmentType {
 /// This struct represents an appointment in the schedule.
 /// It should (more or less) match [Zermelo's appointment specification](https://zermelo.atlassian.net/wiki/spaces/DEV/pages/15860217/Appointment).
 ///
-/// **Note**: instead of camelCase, as used by Zermelo in their JSON, this struct uses snake_case, as common in Rust programs.
+/// **Note**: instead of camelCase, as used by Zermelo in their JSON, this struct uses `snake_case`, as common in Rust programs.
 /// Example: `startTimeSlot` becomes `start_time_slot`.
 ///
 /// **Note**: `appointment_type` is called `type` in Zermelo's API, but `type` is a reserved keyword in Rust.
@@ -113,28 +111,28 @@ pub struct Appointment {
     pub branch: Option<String>,
 }
 
-impl fmt::Debug for Appointment {
-    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+impl ::std::fmt::Debug for Appointment {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> Result<(), ::std::fmt::Error> {
         write!(
             f,
             "#{}\nsubjects: {:?}\nlocations: {:?}\nteachers: {:?}\ngroups: {:?}\n",
             self.start_time_slot.unwrap_or(-1),
             self.subjects
                 .clone()
-                .unwrap_or(vec![])
+                .unwrap_or_default()
                 .as_slice()
                 .join(", "),
             self.locations
                 .clone()
-                .unwrap_or(vec![])
+                .unwrap_or_default()
                 .as_slice()
                 .join(", "),
             self.teachers
                 .clone()
-                .unwrap_or(vec![])
+                .unwrap_or_default()
                 .as_slice()
                 .join(", "),
-            self.groups.clone().unwrap_or(vec![]).as_slice().join(", ")
+            self.groups.clone().unwrap_or_default().as_slice().join(", ")
         )
     }
 }

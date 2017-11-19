@@ -5,8 +5,8 @@
 //!
 //! ## Obtaining an access token
 //! ```no_run
-//! let school = String::from("example");
-//! let code = String::from("123456789012");
+//! let school = "example";
+//! let code = "123456789012";
 //!
 //! let schedule = zermelo::Schedule::new(school, code).unwrap();
 //! println!("Your access token is: {}", schedule.access_token);
@@ -15,8 +15,8 @@
 //!
 //! ## Creating schedule with an access token
 //! ```no_run
-//! let school = String::from("example");
-//! let access_token = String::from("abcdefghijklmnopqrstuvwxyz");
+//! let school = "example";
+//! let access_token = "abcdefghijklmnopqrstuvwxyz";
 //!
 //! let schedule = zermelo::Schedule::with_access_token(school, access_token);
 //! ```
@@ -29,8 +29,8 @@
 //!
 //! ```no_run
 //! # extern crate zermelo;
-//! # let school = String::from("example");
-//! # let access_token = String::from("abcdefghijklmnopqrstuvwxyz");
+//! # let school = "example";
+//! # let access_token = "abcdefghijklmnopqrstuvwxyz";
 //! # let mut schedule = zermelo::Schedule::with_access_token(school, access_token);
 //! // These should be set to something else.
 //! let start: i64 = 0;

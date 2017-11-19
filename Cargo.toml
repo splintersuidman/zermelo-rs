@@ -1,6 +1,8 @@
 [package]
 authors = ["Splinter Suidman"]
 description = "A library that retrieves a schedule from Zermelo."
+documentation = "https://docs.rs/zermelo"
+homepage = "https://github.com/splintah/zermelo-rs"
 keywords = [
     "zermelo",
     "schedule",
@@ -8,13 +10,12 @@ keywords = [
 license = "MIT"
 name = "zermelo"
 readme = "README.md"
-homepage = "https://github.com/splintah/zermelo-rs"
 repository = "https://github.com/splintah/zermelo-rs"
-documentation = "https://docs.rs/zermelo"
-version = "0.1.8"
+version = "0.2.0"
 
-[badges]
-travis-ci = { repository = "splintah/zermelo-rs", branch = "master" }
+[badges.travis-ci]
+branch = "master"
+repository = "splintah/zermelo-rs"
 
 [dependencies]
 reqwest = "0.8.1"

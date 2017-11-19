@@ -6,9 +6,9 @@ use chrono::prelude::*;
 fn main() {
     // Replace these with your own properties.
     // If access_token is set, code does not have to be set.
-    let school = String::from("school");
-    let code = String::from("code");
-    let access_token = String::from("access token");
+    let school = "school";
+    let code = "code";
+    let access_token = "access token";
 
     let mut schedule: zermelo::Schedule;
 
