@@ -43,12 +43,17 @@ impl AppointmentType {
 /// This struct represents an appointment in the schedule.
 /// It should (more or less) match [Zermelo's appointment specification](https://zermelo.atlassian.net/wiki/spaces/DEV/pages/15860217/Appointment).
 ///
+/// This struct does not have an implementation with methods like `Appointment::new()`, because is
+/// is deserialised by serde.
+///
 /// **Note**: instead of camelCase, as used by Zermelo in their JSON, this struct uses `snake_case`, as common in Rust programs.
 /// Example: `startTimeSlot` becomes `start_time_slot`.
 ///
 /// **Note**: `appointment_type` is called `type` in Zermelo's API, but `type` is a reserved keyword in Rust.
 ///
-/// See [Zermelo's appointment documentation](https://zermelo.atlassian.net/wiki/spaces/DEV/pages/15860217/Appointment) for a full explanation of this struct's members.
+/// See [Zermelo's appointment documentation](https://zermelo.atlassian.net/wiki/spaces/DEV/pages/15860217/Appointment)
+/// for a full explanation of this struct's members.
+///
 /// On this page a part of Zermelo's explanation can be found.
 #[derive(Deserialize)]
 pub struct Appointment {
