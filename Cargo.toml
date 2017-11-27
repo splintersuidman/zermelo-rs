@@ -11,7 +11,7 @@ license = "MIT"
 name = "zermelo"
 readme = "README.md"
 repository = "https://github.com/splintah/zermelo-rs"
-version = "0.2.1"
+version = "0.3.0"
 
 [badges.travis-ci]
 branch = "master"
