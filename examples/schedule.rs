@@ -14,11 +14,11 @@ fn main() {
 
     if !code.is_empty() {
         // If we have got an authentication code:
-        schedule = zermelo::Schedule::new(school, code).unwrap();
+        schedule = zermelo::Schedule::new(&school, &code).unwrap();
         println!("{}", schedule.access_token);
     } else if !access_token.is_empty() {
         // else if you have got an access token already:
-        schedule = zermelo::Schedule::with_access_token(school, access_token);
+        schedule = zermelo::Schedule::with_access_token(&school, &access_token);
     } else {
         std::process::exit(1);
     }

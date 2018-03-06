@@ -19,7 +19,7 @@ impl Schedule {
     /// Create a new `Schedule` from an authorization code (only once usable) and a school identifier.
     /// This will get the access token from the API.
     /// Returns a `Schedule` or an error.
-    pub fn new<S>(school: S, code: S) -> Result<Self, String>
+    pub fn new<S>(school: &S, code: &S) -> Result<Self, String>
         where S: ToString
     {
         let school = school.to_string();
@@ -62,7 +62,7 @@ impl Schedule {
 
     /// Create a new `Schedule` when an access token has been obtained already.
     /// This cannot fail, so this will not return a `Result`.
-    pub fn with_access_token<S>(school: S, access_token: S) -> Self
+    pub fn with_access_token<S>(school: &S, access_token: &S) -> Self
         where S: ToString
     {
         Schedule {
@@ -111,7 +111,7 @@ impl Schedule {
             .replace("startTimeSlot", "start_time_slot")
             .replace("endTimeSlot", "end_time_slot")
             .replace("type", "appointment_type")
-            .replace("lastModified", "lastModified")
+            .replace("lastModified", "last_modified")
             .replace("changeDescription", "change_description")
             .replace("branchOfSchool", "branch_of_school");
 
