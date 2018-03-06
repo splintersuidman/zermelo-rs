@@ -8,7 +8,7 @@
 //! let school = "example";
 //! let code = "123456789012";
 //!
-//! let schedule = zermelo::Schedule::new(school, code).unwrap();
+//! let schedule = zermelo::Schedule::new(&school, &code).unwrap();
 //! println!("Your access token is: {}", schedule.access_token);
 //! ```
 //! You have now successfully obtained an access token, so you can continue with [Retrieving a schedule](#retrieving-a-schedule).
@@ -18,7 +18,7 @@
 //! let school = "example";
 //! let access_token = "abcdefghijklmnopqrstuvwxyz";
 //!
-//! let schedule = zermelo::Schedule::with_access_token(school, access_token);
+//! let schedule = zermelo::Schedule::with_access_token(&school, &access_token);
 //! ```
 //! You can continue with [Retrieving a schedule](#retrieving-a-schedule).
 //!
@@ -31,7 +31,7 @@
 //! # extern crate zermelo;
 //! # let school = "example";
 //! # let access_token = "abcdefghijklmnopqrstuvwxyz";
-//! # let mut schedule = zermelo::Schedule::with_access_token(school, access_token);
+//! # let mut schedule = zermelo::Schedule::with_access_token(&school, &access_token);
 //! // These should be set to something else.
 //! let start: i64 = 0;
 //! let end: i64 = 10;
