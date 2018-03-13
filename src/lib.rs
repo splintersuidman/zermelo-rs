@@ -46,11 +46,11 @@
 //! ```
 //! See [Schedule](./struct.Schedule.html) for the Schedule struct and its members.
 
+extern crate reqwest;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-extern crate reqwest;
 
 mod schedule;
 mod appointment;

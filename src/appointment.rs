@@ -83,14 +83,12 @@ pub struct Appointment {
     pub locations: Option<Vec<String>>,
     // The identifiers of the locations (classrooms) where this appointment will take place.
     // TODO: pub locations_of_branch: ?,
-
     /// The (three letter) codes/abbreviations of the teachers participating in this appointment.
     pub teachers: Option<Vec<String>>,
     /// The names of the student groups participating in this appointment.
     pub groups: Option<Vec<String>>,
     // A list of the actual groups participating in this appointment.
     // TODO: pub groups_in_department: ?,
-
     /// The UTC Unix Time of when this appointment version was created. Useful to show a chronological view of the history of this appointment.
     pub created: Option<i64>,
     /// Unix time (UTC) at which any fields of this version of the appointment were modified or when this version of the appointment was created.
@@ -137,7 +135,11 @@ impl ::std::fmt::Debug for Appointment {
                 .unwrap_or_default()
                 .as_slice()
                 .join(", "),
-            self.groups.clone().unwrap_or_default().as_slice().join(", ")
+            self.groups
+                .clone()
+                .unwrap_or_default()
+                .as_slice()
+                .join(", ")
         )
     }
 }

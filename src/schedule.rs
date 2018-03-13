@@ -3,6 +3,22 @@ use serde_json;
 use appointment::*;
 use std::io::Read;
 use std::error::Error;
+use std::fmt;
+
+#[derive(Debug)]
+pub struct ScheduleError(&'static str);
+
+impl fmt::Display for ScheduleError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl Error for ScheduleError {
+    fn description(&self) -> &str {
+        self.0
+    }
+}
 
 /// This struct represents the schedule, containing [Appointment](./struct.Appointment.html)s.
 pub struct Schedule {
@@ -19,8 +35,9 @@ impl Schedule {
     /// Create a new `Schedule` from an authorization code (only once usable) and a school identifier.
     /// This will get the access token from the API.
     /// Returns a `Schedule` or an error.
-    pub fn new<S>(school: &S, code: &S) -> Result<Self, String>
-        where S: ToString
+    pub fn new<S>(school: &S, code: &S) -> Result<Self, Box<Error>>
+    where
+        S: ToString,
     {
         let school = school.to_string();
         let code = code.to_string();
@@ -31,25 +48,18 @@ impl Schedule {
         let post_data = [("grant_type", "autorization_code"), ("code", code.as_str())];
 
         // Send request.
-        let response = reqwest::Client::new()
+        let mut response = reqwest::Client::new()
             .post(url.as_str())
             .form(&post_data)
-            .send();
-        let mut response = match response {
-            Ok(res) => res,
-            Err(e) => return Err(format!("could not make request: {}", e.description())),
-        };
+            .send()?;
 
         // Check whether response code equals "200 OK".
         if response.status().as_u16() != 200 {
-            return Err("response code is not 200".to_owned());
+            return Err(Box::new(ScheduleError("response code is not 200")));
         }
 
         // Parse response as JSON.
-        let json: AuthenticationResponse = match response.json() {
-            Ok(j) => j,
-            Err(e) => return Err(format!("could not parse response as JSON: {}", e.description())),
-        };
+        let json: AuthenticationResponse = response.json()?;
 
         let access_token = json.access_token;
 
@@ -63,7 +73,8 @@ impl Schedule {
     /// Create a new `Schedule` when an access token has been obtained already.
     /// This cannot fail, so this will not return a `Result`.
     pub fn with_access_token<S>(school: &S, access_token: &S) -> Self
-        where S: ToString
+    where
+        S: ToString,
     {
         Schedule {
             school: school.to_string(),
@@ -74,37 +85,23 @@ impl Schedule {
 
     /// Get the appointments between `start` and `end` from the API, and set them to `self.appointments`.
     /// Returns a reference to itself, or an error.
-    pub fn get_appointments(&mut self, start: i64, end: i64) -> Result<&Self, String> {
+    pub fn get_appointments(&mut self, start: i64, end: i64) -> Result<&Self, Box<Error>> {
         let url = format!(
             "https://{}.zportal.nl/api/v3/appointments?user=~me&start={}&end={}&access_token={}",
-            self.school,
-            start,
-            end,
-            self.access_token
+            self.school, start, end, self.access_token
         );
 
         // Make request.
-        let mut response = match reqwest::get(url.as_str()) {
-            Ok(res) => res,
-            Err(e) => return Err(format!("could not make request: {}", e.description())),
-        };
+        let mut response = reqwest::get(url.as_str())?;
 
         // Check whether response code equals "200 OK".
         if response.status().as_u16() != 200 {
-            return Err("response code is not 200".to_owned());
+            return Err(Box::new(ScheduleError("response code is not 200")));
         }
 
         // Read body to string.
         let mut body = String::new();
-        match response.read_to_string(&mut body) {
-            Ok(res) => res,
-            Err(e) => {
-                return Err(format!(
-                    "could read response to string: {}",
-                    e.description()
-                ))
-            }
-        };
+        response.read_to_string(&mut body)?;
 
         // Replace camelCase index with snake_case index, so we can deserialize it easier.
         let body = body.replace("appointmentInstance", "appointment_instance")
@@ -115,15 +112,7 @@ impl Schedule {
             .replace("changeDescription", "change_description")
             .replace("branchOfSchool", "branch_of_school");
 
-        let response: AppointmentsResponse = match serde_json::from_str(body.as_str()) {
-            Ok(res) => res,
-            Err(e) => {
-                return Err(format!(
-                    "could parse JSON from response: {}",
-                    e.description()
-                ))
-            }
-        };
+        let response: AppointmentsResponse = serde_json::from_str(body.as_str())?;
 
         self.appointments = response.response.data;
 
