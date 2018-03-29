@@ -103,15 +103,6 @@ impl Schedule {
         let mut body = String::new();
         response.read_to_string(&mut body)?;
 
-        // Replace camelCase index with snake_case index, so we can deserialize it easier.
-        let body = body.replace("appointmentInstance", "appointment_instance")
-            .replace("startTimeSlot", "start_time_slot")
-            .replace("endTimeSlot", "end_time_slot")
-            .replace("type", "appointment_type")
-            .replace("lastModified", "last_modified")
-            .replace("changeDescription", "change_description")
-            .replace("branchOfSchool", "branch_of_school");
-
         let response: AppointmentsResponse = serde_json::from_str(body.as_str())?;
 
         self.appointments = response.response.data;
@@ -179,21 +170,13 @@ mod tests {
             }
         }"#;
 
-        let json = json.replace("appointmentInstance", "appointment_instance")
-            .replace("startTimeSlot", "start_time_slot")
-            .replace("endTimeSlot", "end_time_slot")
-            .replace("type", "appointment_type")
-            .replace("lastModified", "lastModified")
-            .replace("changeDescription", "change_description")
-            .replace("branchOfSchool", "branch_of_school");
-
-        let response: AppointmentsResponse = serde_json::from_str(json.as_str()).unwrap();
+        let response: AppointmentsResponse = serde_json::from_str(json).unwrap();
         let appointment = &response.response.data[0];
         assert_eq!(appointment.id, Some(5));
         assert_eq!(appointment.start, Some(42364236));
         assert_eq!(appointment.start_time_slot, Some(1));
         assert_eq!(appointment.subjects, Some(vec![String::from("ne")]));
-        assert_eq!(appointment.appointment_type, Some(String::from("lesson")));
+        assert_eq!(appointment.appointment_type, Some(AppointmentType::Lesson));
         assert_eq!(appointment.cancelled, Some(false));
     }
 }

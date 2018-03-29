@@ -6,6 +6,8 @@
 /// let t = AppointmentType::parse("exam"); // => Some(AppointmentType::Exam)
 /// let n = AppointmentType::parse("abc"); // => None
 /// ```
+#[derive(Deserialize, Debug, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum AppointmentType {
     /// `unknown` in Zermelo's API.
     Unknown,
@@ -56,6 +58,7 @@ impl AppointmentType {
 ///
 /// On this page a part of Zermelo's explanation can be found.
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Appointment {
     /// The id of the appointment instance this appointment version belongs to.
     pub appointment_instance: Option<i64>,
@@ -75,7 +78,8 @@ pub struct Appointment {
     pub subjects: Option<Vec<String>>,
     /// The type of this appointment. See [AppointmentType](./enum.AppointmentType.html) for more information.
     /// **Note**: this member is called `type` in Zermelo's API, but `type` is a reserved keyword in Rust.
-    pub appointment_type: Option<String>,
+    #[serde(rename = "type")]
+    pub appointment_type: Option<AppointmentType>,
     /// Remark for this appointment. For example: "Don't forget your books".
     pub remark: Option<String>,
 
@@ -146,7 +150,7 @@ impl ::std::fmt::Debug for Appointment {
 
 #[cfg(test)]
 mod tests {
-    use appointment::Appointment;
+    use appointment::{Appointment, AppointmentType};
     use serde_json;
 
     #[test]
@@ -154,11 +158,12 @@ mod tests {
         let json = r#"{
             "start": 1510185600,
             "end": 1510271999,
-            "start_time_slot": 0,
-            "end_time_slot": 9,
+            "startTimeSlot": 0,
+            "endTimeSlot": 9,
             "subjects": [
                 "netl"
-            ]
+            ],
+            "type": "lesson"
         }"#;
 
         let appointment: Appointment = serde_json::from_str(json).unwrap();
@@ -167,5 +172,6 @@ mod tests {
         assert_eq!(appointment.start_time_slot, Some(0));
         assert_eq!(appointment.end_time_slot, Some(9));
         assert_eq!(appointment.subjects, Some(vec![String::from("netl")]));
+        assert_eq!(appointment.appointment_type, Some(AppointmentType::Lesson));
     }
 }
